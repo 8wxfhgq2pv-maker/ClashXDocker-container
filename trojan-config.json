@@ -1,0 +1,68 @@
+{
+  "run_type": "server",
+  "local_addr": "0.0.0.0",
+  "local_port": 443,
+  "remote_addr": "127.0.0.1",
+  "remote_port": 80,
+  "password": [
+    "change_me_to_strong_password_123456"
+  ],
+  "log_level": 1,
+  "ssl": {
+    "cert": "/app/certs/server.crt",
+    "key": "/app/certs/server.key",
+    "key_password": "",
+    "cipher": "DEFAULT",
+    "cipher_tls13": "TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384",
+    "prefer_server_cipher": true,
+    "alpn": [
+      "http/1.1"
+    ],
+    "reuse_session": true,
+    "session_ticket": false,
+    "session_timeout": 600,
+    "plain_http_response": "",
+    "curves": "",
+    "dhparam": ""
+  },
+  "tcp": {
+    "prefer_ipv4": false,
+    "no_delay": true,
+    "keep_alive": true,
+    "reuse_port": false
+  },
+  "mysql": {
+    "enabled": false,
+    "server_addr": "127.0.0.1",
+    "server_port": 3306,
+    "database": "trojan",
+    "username": "trojan",
+    "password": "",
+    "key": "",
+    "cert": "",
+    "ca": ""
+  },
+  "api": {
+    "enabled": false,
+    "api_addr": "127.0.0.1",
+    "api_port": 10000,
+    "ssl": {
+      "enabled": false,
+      "cert": "/app/certs/api/server.crt",
+      "key": "/app/certs/api/server.key",
+      "key_password": "",
+      "cipher": "DEFAULT",
+      "cipher_tls13": "TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384",
+      "prefer_server_cipher": true,
+      "alpn": [
+        "h2"
+      ],
+      "reuse_session": true,
+      "session_ticket": false,
+      "session_timeout": 600,
+      "plain_http_response": "",
+      "curves": "",
+      "dhparam": ""
+    }
+  }
+}

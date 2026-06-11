@@ -1,0 +1,33 @@
+FROM alpine:latest
+
+LABEL maintainer="ClashX Docker" \
+      description="V2Ray proxy server compatible with ClashX"
+
+WORKDIR /app
+
+# 安装依赖
+RUN apk add --no-cache \
+    ca-certificates \
+    curl \
+    unzip
+
+# 下载并安装 V2Ray
+RUN mkdir -p /v2ray && \
+    LATEST=$(curl -s https://api.github.com/repos/v2fly/v2ray-core/releases/latest | grep 'tag_name' | cut -d'"' -f4) && \
+    curl -L "https://github.com/v2fly/v2ray-core/releases/download/${LATEST}/v2ray-linux-64.zip" -o /tmp/v2ray.zip && \
+    unzip -q /tmp/v2ray.zip -d /v2ray && \
+    rm /tmp/v2ray.zip && \
+    chmod +x /v2ray/v2ray
+
+# 复制配置文件
+COPY v2ray-config.json /app/config.json
+
+# 暴露端口
+EXPOSE 10086
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD nc -z 127.0.0.1 10086 || exit 1
+
+# 启动 V2Ray
+CMD ["/v2ray/v2ray", "-config", "/app/config.json"]

@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+LABEL maintainer="ClashX Docker" \
+      description="Shadowsocks proxy server compatible with ClashX"
+
+WORKDIR /app
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    build-essential \
+    libssl-dev \
+    libsodium-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装 Shadowsocks
+RUN pip install --no-cache-dir https://github.com/shadowsocks/shadowsocks/archive/master.zip
+
+# 复制配置文件
+COPY ss-config.json /app/config.json
+
+# 暴露端口
+EXPOSE 8388
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD python3 -c "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8388)); s.close()" || exit 1
+
+# 启动 Shadowsocks 服务器
+CMD ["ssserver", "-c", "/app/config.json"]

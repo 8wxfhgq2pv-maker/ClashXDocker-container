@@ -1,0 +1,38 @@
+FROM ubuntu:22.04
+
+LABEL maintainer="ClashX Docker" \
+      description="Trojan proxy server compatible with ClashX"
+
+WORKDIR /app
+
+# 安装依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    unzip \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 下载并安装 Trojan-Go
+RUN mkdir -p /trojan && \
+    LATEST=$(curl -s https://api.github.com/repos/p4gefau1t/trojan-go/releases/latest | grep 'tag_name' | cut -d'"' -f4) && \
+    curl -L "https://github.com/p4gefau1t/trojan-go/releases/download/${LATEST}/trojan-go-linux-amd64.zip" -o /tmp/trojan.zip && \
+    unzip -q /tmp/trojan.zip -d /trojan && \
+    rm /tmp/trojan.zip && \
+    chmod +x /trojan/trojan-go
+
+# 创建证书目录
+RUN mkdir -p /app/certs
+
+# 复制配置文件
+COPY trojan-config.json /app/config.json
+
+# 暴露端口
+EXPOSE 443
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -k https://127.0.0.1:443 || exit 1
+
+# 启动 Trojan
+CMD ["/trojan/trojan-go", "-config", "/app/config.json"]

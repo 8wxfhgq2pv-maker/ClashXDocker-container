@@ -1,0 +1,26 @@
+{
+  "inbounds": [
+    {
+      "port": 10086,
+      "listen": "0.0.0.0",
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "d96fd47d-0bba-4d85-ab97-4bf37c44fb3d",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp"
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}

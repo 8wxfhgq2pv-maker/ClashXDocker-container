@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Shadowsocks 服务
+  shadowsocks:
+    build:
+      context: .
+      dockerfile: Dockerfile.shadowsocks
+    container_name: clash-proxy-ss
+    ports:
+      - "8388:8388"
+    volumes:
+      - ./ss-config.json:/app/config.json:ro
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    environment:
+      - TZ=UTC
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8388)); s.close()"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # V2Ray 服务
+  v2ray:
+    build:
+      context: .
+      dockerfile: Dockerfile.v2ray
+    container_name: clash-proxy-v2ray
+    ports:
+      - "10086:10086"
+    volumes:
+      - ./v2ray-config.json:/app/config.json:ro
+    restart: unless-stopped
+    networks:
+      - proxy-network
+    environment:
+      - TZ=UTC
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "10086"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # Trojan 服务（可选，需要证书）
+  # trojan:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.trojan
+  #   container_name: clash-proxy-trojan
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - ./trojan-config.json:/app/config.json:ro
+  #     - ./certs:/app/certs:ro
+  #   restart: unless-stopped
+  #   networks:
+  #     - proxy-network
+  #   environment:
+  #     - TZ=UTC
+
+networks:
+  proxy-network:
+    driver: bridge
+
+volumes:
+  proxy-data:

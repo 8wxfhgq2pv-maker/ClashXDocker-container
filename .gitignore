@@ -1,0 +1,39 @@
+# 密钥和证书
+*.key
+*.crt
+*.pem
+*.cert
+
+# 配置文件中的敏感信息备份
+ss-config.json.bak
+v2ray-config.json.bak
+trojan-config.json.bak
+
+# Docker
+.dockerignore
+.docker/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志
+*.log
+*.pid
+
+# 缓存
+__pycache__/
+*.pyc
+.cache/
+
+# 临时文件
+tmp/
+temp/
